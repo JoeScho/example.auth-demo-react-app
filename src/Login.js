@@ -2,7 +2,9 @@ import './App.css'
 import { useState } from 'react'
 import axios from 'axios'
 
-const Login = ({ setSessionId, toggleShowLoginForm }) => {
+const ONE_DAY_IN_SECONDS = 60 * 60 * 24
+
+const Login = ({ setSessionId, toggleShowLoginForm, cookies }) => {
     const [loginState, setLoginState] = useState({
         username: '',
         password: ''
@@ -20,10 +22,12 @@ const Login = ({ setSessionId, toggleShowLoginForm }) => {
 
         try {
             const response = await axios.post('http://localhost:4000/login', loginState)
-            console.log('Successfully login in, session ID: ', response.data.sessionId)
+            console.log('Successfully logged in, session ID: ', response.data.sessionId)
             setSessionId(response.data.sessionId)
+            cookies.set('sessionId', response.data.sessionId, { maxAge: ONE_DAY_IN_SECONDS })
         } catch (err) {
             // handle error
+            console.log(err)
         }
     }
 

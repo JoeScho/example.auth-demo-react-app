@@ -2,12 +2,15 @@ import logo from './logo.png';
 import gif from './giphy.gif'
 import './App.css';
 import { useState } from 'react'
+import Cookies from 'universal-cookie';
 
 import Login from './Login';
 import Signup from './Signup';
 
+const cookies = new Cookies();
+
 function App() {
-  const [sessionId, setSessionId] = useState('')
+  const [sessionId, setSessionId] = useState(cookies.get('sessionId') || '')
   const [showLoginForm, setShowLoginForm] = useState(true)
 
   const toggleShowLoginForm = () => setShowLoginForm(!showLoginForm)
@@ -25,8 +28,8 @@ function App() {
             <>
               {
                 showLoginForm ?
-                  <Login setSessionId={setSessionId} toggleShowLoginForm={toggleShowLoginForm} /> :
-                  <Signup toggleShowLoginForm={toggleShowLoginForm} />
+                  <Login setSessionId={setSessionId} toggleShowLoginForm={toggleShowLoginForm} cookies={cookies} /> :
+                  <Signup setSessionId={setSessionId} toggleShowLoginForm={toggleShowLoginForm} cookies={cookies} />
               }
             </>
         }
