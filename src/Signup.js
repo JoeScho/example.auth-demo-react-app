@@ -9,6 +9,7 @@ const Signup = ({ setSessionId, toggleShowLoginForm, cookies }) => {
         username: '',
         password: ''
     })
+    const [errorState, setErrorState] = useState('')
 
     const handleUpdate = (e) => {
         setSignupState({
@@ -21,24 +22,27 @@ const Signup = ({ setSessionId, toggleShowLoginForm, cookies }) => {
         e.preventDefault()
 
         try {
-            const response = await axios.post('http://localhost:4000/signup', signupState)
+            const response = await axios.post('http://localhost:4000/signup', signupState, { timeout: 1000 })
             console.log('Successfully signed up')
             setSessionId(response.data.sessionId)
             cookies.set('sessionId', response.data.sessionId, { maxAge: ONE_DAY_IN_SECONDS })
         } catch (err) {
-            // handle error
             console.log(err)
+            setErrorState(err?.response?.data || 'Something went wrong')
         }
     }
 
     return (
-        <form className='Form'>
-            <p>Welcome! Sign up to get started.</p>
-            <input type="text" placeholder="username" name="username" onChange={handleUpdate} />
-            <input type="password" placeholder="password" name="password" onChange={handleUpdate} />
-            <input type="submit" onClick={handleSubmit}/>
-            <button className='subtext' onClick={toggleShowLoginForm}>Already have an account? Click here to sign in</button>
-        </form>
+        <>
+            <form className='Form'>
+                <p>Welcome! Sign up to get started.</p>
+                <input type="text" placeholder="username" name="username" onChange={handleUpdate} />
+                <input type="password" placeholder="password" name="password" onChange={handleUpdate} />
+                <input type="submit" onClick={handleSubmit} />
+                <button className='subtext' onClick={toggleShowLoginForm}>Already have an account? Click here to sign in</button>
+            </form>
+            {errorState && <p className='ErrorText'>{errorState}</p>}
+        </>
     )
 }
 
